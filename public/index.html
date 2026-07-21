@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Currii</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,500,0,0;0,9..144,600,0,0;1,9..144,600,100,1;1,9..144,700,100,1&family=Inter:wght@400;500;600;700&display=optional" rel="stylesheet">
+    <link rel="stylesheet" href="css/app.css">
+</head>
+<body>
+
+    <!-- Auth Screen -->
+    <div id="auth-screen" class="auth-screen">
+        <div class="auth-card">
+            <h1 class="auth-logo">Currii</h1>
+            <p class="auth-tagline">A quiet place to read the web.</p>
+
+            <div class="auth-tabs">
+                <button class="auth-tab active" data-form="login-form">Log In</button>
+                <button class="auth-tab" data-form="register-form">Register</button>
+            </div>
+
+            <div class="auth-form-stack">
+                <form id="login-form" class="auth-form">
+                    <input type="email" id="login-email" placeholder="Email" autocomplete="email" required>
+                    <input type="password" id="login-password" placeholder="Password" autocomplete="current-password" required>
+                    <p class="auth-error" id="login-error"></p>
+                    <button type="submit" class="auth-submit">Log In</button>
+                    <a href="#" id="forgot-password-link" class="auth-link">Forgot password?</a>
+                </form>
+
+                <form id="register-form" class="auth-form hidden">
+                    <input type="email" id="register-email" placeholder="Email" autocomplete="email" required>
+                    <input type="password" id="register-password" placeholder="Password (min 8 characters)" autocomplete="new-password" required minlength="8">
+                    <p class="auth-error" id="register-error"></p>
+                    <button type="submit" class="auth-submit">Create Account</button>
+                    <a href="#" class="auth-link" id="switch-to-login-link">Already made an account?</a>
+                </form>
+            </div>
+
+            <div class="auth-divider"><span>or</span></div>
+            <button id="guest-btn" class="auth-guest-btn">Continue as Guest</button>
+        </div>
+    </div>
+
+    <!-- Main Application -->
+    <div id="app-root" class="hidden">
+        <header class="app-header">
+            <div class="brand">
+                <span class="brand-mark">Currii</span>
+            </div>
+
+            <div class="search-box">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+                <input type="text" id="search-input" placeholder="Search Feed (Ctrl+K)">
+            </div>
+
+            <div class="header-right">
+                <span id="guest-badge" class="guest-badge hidden">Guest</span>
+                <button class="toolbar-icon-btn" id="btn-settings" title="Settings">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+                </button>
+                <button class="text-btn" id="btn-logout">Log out</button>
+            </div>
+        </header>
+
+        <main class="app-layout">
+            <!-- Column 1: Sources / Categories -->
+            <aside class="col-sources panel">
+                <button id="add-feed-btn" class="compose-btn" aria-label="Add Feed">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 5v14m-7-7h14"/></svg>
+                    Add source
+                </button>
+
+                <nav class="capsule-nav center-capsule">
+                    <button class="nav-item active" data-view="feed">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-6l-2 3h-4l-2-3H2"/><path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/></svg>
+                        Feed
+                    </button>
+                    <button class="nav-item" data-view="bookmarks">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+                        Starred
+                    </button>
+                    <button class="nav-item" data-view="sources">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16v4H4zM4 12h16v8H4z"/></svg>
+                        Sources
+                    </button>
+                </nav>
+
+                <div class="rail-label">Feeds</div>
+                <ul class="source-list" id="source-list"></ul>
+            </aside>
+
+            <!-- Column 2: Article List -->
+            <section class="col-feed panel">
+                <div class="list-toolbar">
+                    <span class="list-toolbar-title" id="feed-panel-title">Feed</span>
+                    <button class="text-btn" id="mark-all-read-btn" title="Mark all as read">Mark all read</button>
+                </div>
+                <div class="article-list" id="article-list"></div>
+                <div class="article-list-empty hidden" id="article-list-empty">No articles yet — add a source to get started.</div>
+            </section>
+
+            <!-- Column 2 alt: Sources Management (shown when "Sources" tab is active) -->
+            <section class="col-feed panel hidden" id="sources-manage-panel">
+                <div class="list-toolbar">
+                    <span class="list-toolbar-title">Manage sources</span>
+                </div>
+                <div class="source-manage-list" id="source-manage-list"></div>
+            </section>
+
+            <!-- Column 3: Reading Panel -->
+            <article class="col-reader panel" id="reader-panel">
+                <div class="reader-empty-state">
+                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M22 12h-6l-2 3h-4l-2-3H2"/><path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/></svg>
+                    <span>Select an article to read</span>
+                </div>
+                <div class="reader-content hidden">
+                    <header class="reader-header">
+                        <div class="reader-toolbar">
+                            <button class="toolbar-icon-btn" id="btn-collapse-feed" title="Hide feed list">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 3v18"/><path d="m14 9-3 3 3 3"/><rect x="3" y="3" width="18" height="18" rx="2"/></svg>
+                            </button>
+                            <span class="reader-toolbar-spacer"></span>
+                            <button class="toolbar-icon-btn" id="btn-bookmark" title="Star">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+                            </button>
+                            <a href="#" target="_blank" rel="noopener noreferrer" class="toolbar-icon-btn" id="btn-original" title="Open original">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><path d="M15 3h6v6"/><path d="M10 14 21 3"/></svg>
+                            </a>
+                        </div>
+                        <h1 id="read-title">Article Title</h1>
+                        <div class="reader-byline">
+                            <div class="byline-avatar" id="read-avatar">?</div>
+                            <div class="byline-text">
+                                <span id="read-website">Website</span>
+                                <span class="byline-date" id="read-date">Date</span>
+                            </div>
+                        </div>
+                        <div class="reader-tags hidden" id="read-tags"></div>
+                    </header>
+                    <div class="reader-body" id="read-body"></div>
+                </div>
+            </article>
+        </main>
+    </div>
+
+    <!-- Command Palette (Ctrl+K) -->
+    <dialog id="cmd-palette" class="cmd-palette">
+        <input type="text" id="cmd-input" placeholder="Search everywhere... (Titles, feeds, tags)">
+        <ul id="cmd-results" class="cmd-results"></ul>
+    </dialog>
+
+    <!-- App Modal: replaces native prompt()/confirm() dialogs -->
+    <dialog id="app-modal" class="app-modal">
+        <form id="app-modal-form" method="dialog">
+            <h2 class="app-modal-title" id="app-modal-title">Title</h2>
+            <p class="app-modal-message hidden" id="app-modal-message"></p>
+            <label class="app-modal-label hidden" id="app-modal-label" for="app-modal-input">Enter the RSS or Atom feed URL</label>
+            <input type="text" class="app-modal-input hidden" id="app-modal-input">
+            <p class="app-modal-error hidden" id="app-modal-error"></p>
+            <div class="app-modal-actions">
+                <button type="button" class="app-modal-btn app-modal-cancel" id="app-modal-cancel">Cancel</button>
+                <button type="submit" class="app-modal-btn app-modal-confirm" id="app-modal-confirm">OK</button>
+            </div>
+        </form>
+    </dialog>
+
+    <!-- Welcome / loading screen, shown briefly after login unless disabled in Settings -->
+    <div id="welcome-screen" class="welcome-screen hidden">
+        <div class="welcome-lines">
+            <span class="welcome-line" id="welcome-line-1">Currii</span>
+            <span class="welcome-line" id="welcome-line-2">A quiet place to read the web</span>
+            <span class="welcome-line" id="welcome-line-3">Curated Just for you</span>
+        </div>
+    </div>
+
+    <!-- Settings -->
+    <dialog id="settings-modal" class="app-modal settings-modal">
+        <div class="app-modal-title-row">
+            <h2 class="app-modal-title">Settings</h2>
+            <button type="button" class="toolbar-icon-btn" id="settings-close">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
+            </button>
+        </div>
+
+        <div class="settings-row">
+            <div class="settings-row-text">
+                <strong>Dark theme</strong>
+                <span>Switch Currii to a darker, low-light palette.</span>
+            </div>
+            <label class="settings-switch">
+                <input type="checkbox" id="settings-dark-toggle">
+                <span class="settings-switch-track"></span>
+            </label>
+        </div>
+
+        <div class="settings-row settings-row-column">
+            <div class="settings-row-text">
+                <strong>Text size</strong>
+                <span>Scales article titles and reading text throughout Currii.</span>
+            </div>
+            <div class="settings-font-scale">
+                <button type="button" class="settings-scale-btn" id="settings-font-decrease" aria-label="Decrease text size">A−</button>
+                <div class="settings-scale-track" id="settings-scale-track">
+                    <div class="settings-scale-fill" id="settings-scale-fill"></div>
+                    <div class="settings-scale-dot" data-value="0.9"></div>
+                    <div class="settings-scale-dot" data-value="1"></div>
+                    <div class="settings-scale-dot" data-value="1.1"></div>
+                    <div class="settings-scale-dot" data-value="1.2"></div>
+                </div>
+                <button type="button" class="settings-scale-btn" id="settings-font-increase" aria-label="Increase text size">A+</button>
+            </div>
+        </div>
+
+        <div class="settings-row">
+            <div class="settings-row-text">
+                <strong>Welcome animation</strong>
+                <span>Show the "Currii" intro screen each time you log in.</span>
+            </div>
+            <label class="settings-switch">
+                <input type="checkbox" id="settings-welcome-toggle" checked>
+                <span class="settings-switch-track"></span>
+            </label>
+        </div>
+    </dialog>
+
+    <div id="toast-container" class="toast-container"></div>
+
+    <script src="js/api.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
