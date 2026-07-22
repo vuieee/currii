@@ -7,7 +7,7 @@
   <img src="assets/curriiheader.png" width="100%" alt="Currii Header" />
   
 </div>
-A minimal, self-hosted RSS/Atom reader. Follow any feed by URL, read distraction-free, and keep a bookmarked reading list — with a guest mode for trying it out before creating an account.
+A minimal, self-hosted RSS/Atom reader. Follow any feed by URL, read distraction-free, and keep a bookmarked reading list with a guest mode for trying it out before creating an account.
 
 ---
 
