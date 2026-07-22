@@ -23,6 +23,10 @@ class Subscription {
     }
 
     public function toggleNotification($userId, $feedId, $notifyStatus) {
+        // Same fix as Article::toggleState — real prepared statements send PHP
+        // booleans as '' rather than 0/1, which strict SQL mode rejects here.
+        $notifyStatus = (int)$notifyStatus;
+
         $stmt = $this->db->prepare(
             'UPDATE Subscriptions SET notify_email = ? WHERE user_id = ? AND feed_id = ?'
         );

@@ -35,7 +35,7 @@ class Article {
     public function getFeedForUser($userId, $limit = 50, $offset = 0) {
         $stmt = $this->db->prepare('
             SELECT a.id, a.feed_id, a.title, a.url, a.published_at, a.author, f.title as source_title, f.favicon_url,
-                   COALESCE(ua.is_read, 0) as is_read, COALESCE(ua.is_bookmarked, 0) as is_bookmarked,
+                   COALESCE(MAX(ua.is_read), 0) as is_read, COALESCE(MAX(ua.is_bookmarked), 0) as is_bookmarked,
                    GROUP_CONCAT(DISTINCT t.name ORDER BY t.name SEPARATOR \',\') as tags
             FROM Articles a
             JOIN Subscriptions s ON a.feed_id = s.feed_id
@@ -44,7 +44,7 @@ class Article {
             LEFT JOIN Article_Tags at ON at.article_id = a.id
             LEFT JOIN Tags t ON t.id = at.tag_id AND t.user_id = ?
             WHERE s.user_id = ?
-            GROUP BY a.id
+            GROUP BY a.id, a.feed_id, a.title, a.url, a.published_at, a.author, f.title, f.favicon_url
             ORDER BY a.published_at DESC
             LIMIT ? OFFSET ?
         ');
@@ -63,7 +63,7 @@ class Article {
     public function getBookmarksForUser($userId, $limit = 50, $offset = 0) {
         $stmt = $this->db->prepare('
             SELECT a.id, a.feed_id, a.title, a.url, a.published_at, a.author, f.title as source_title, f.favicon_url,
-                   ua.is_read, ua.is_bookmarked,
+                   MAX(ua.is_read) as is_read, MAX(ua.is_bookmarked) as is_bookmarked,
                    GROUP_CONCAT(DISTINCT t.name ORDER BY t.name SEPARATOR \',\') as tags
             FROM UserArticles ua
             JOIN Articles a ON a.id = ua.article_id
@@ -71,7 +71,7 @@ class Article {
             LEFT JOIN Article_Tags at ON at.article_id = a.id
             LEFT JOIN Tags t ON t.id = at.tag_id AND t.user_id = ?
             WHERE ua.user_id = ? AND ua.is_bookmarked = 1
-            GROUP BY a.id
+            GROUP BY a.id, a.feed_id, a.title, a.url, a.published_at, a.author, f.title, f.favicon_url
             ORDER BY a.published_at DESC
             LIMIT ? OFFSET ?
         ');
@@ -91,7 +91,7 @@ class Article {
         $like = '%' . $term . '%';
         $stmt = $this->db->prepare('
             SELECT a.id, a.feed_id, a.title, a.url, a.published_at, a.author, f.title as source_title, f.favicon_url,
-                   COALESCE(ua.is_read, 0) as is_read, COALESCE(ua.is_bookmarked, 0) as is_bookmarked,
+                   COALESCE(MAX(ua.is_read), 0) as is_read, COALESCE(MAX(ua.is_bookmarked), 0) as is_bookmarked,
                    GROUP_CONCAT(DISTINCT t.name ORDER BY t.name SEPARATOR \',\') as tags
             FROM Articles a
             JOIN Subscriptions s ON a.feed_id = s.feed_id
@@ -105,7 +105,7 @@ class Article {
                        SELECT 1 FROM Article_Tags at2 JOIN Tags t2 ON t2.id = at2.tag_id
                        WHERE at2.article_id = a.id AND t2.user_id = ? AND t2.name LIKE ?
                    ))
-            GROUP BY a.id
+            GROUP BY a.id, a.feed_id, a.title, a.url, a.published_at, a.author, f.title, f.favicon_url
             ORDER BY a.published_at DESC
             LIMIT ?
         ');
@@ -174,6 +174,11 @@ class Article {
         // Safely restrict field names to prevent SQL injection
         $allowedFields = ['is_read', 'is_bookmarked'];
         if (!in_array($field, $allowedFields)) return false;
+
+        // With real prepared statements (PDO::ATTR_EMULATE_PREPARES = false), PDO sends
+        // PHP booleans as an empty string rather than 0/1, which MySQL's strict mode
+        // rejects for this integer column — cast explicitly instead.
+        $state = (int)$state;
 
         $stmt = $this->db->prepare("
             INSERT INTO UserArticles (user_id, article_id, $field) 

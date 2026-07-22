@@ -2,6 +2,15 @@
 // index.php - Front Controller
 session_start();
 
+// Prevent the browser from caching (in memory, on disk, or in the
+// back/forward cache) any page or response served through this app.
+// Without this, pressing Back after logging in/out can show a stale
+// snapshot of the previous page instead of re-checking real session
+// state — a classic session-handling flag in web app reviews.
+header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
+header('Pragma: no-cache');
+header('Expires: 0');
+
 // Simple autoloader for app classes
 spl_autoload_register(function ($class) {
     $directories = ['Core', 'Controllers', 'Models', 'Services'];
@@ -46,6 +55,13 @@ $router->add('POST', '/api/articles/search', 'FeedController', 'search');
 $router->add('POST', '/api/articles/toggle', 'FeedController', 'toggleArticleState');
 $router->add('POST', '/api/articles/mark-all-read', 'FeedController', 'markAllRead');
 $router->add('POST', '/api/articles/fetch-full', 'FeedController', 'fetchFullContent');
+
+// Admin routes — every action re-checks Security::requireAdmin() in AdminController's constructor
+$router->add('GET', '/api/admin/users', 'AdminController', 'dashboard');
+$router->add('POST', '/api/admin/user', 'AdminController', 'getUser');
+$router->add('POST', '/api/admin/user/update', 'AdminController', 'updateUser');
+$router->add('POST', '/api/admin/user/status', 'AdminController', 'setStatus');
+$router->add('POST', '/api/admin/user/delete', 'AdminController', 'deleteUser');
 
 // Sync route — in production this should run via a protected CLI/cron entry point, not a public GET
 $router->add('GET', '/api/sync', function () {

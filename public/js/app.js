@@ -26,6 +26,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const guestBadge = document.getElementById('guest-badge');
     const logoutBtn = document.getElementById('btn-logout');
+    const adminBtn = document.getElementById('btn-admin');
 
     const articleListEl = document.getElementById('article-list');
     const articleListEmptyEl = document.getElementById('article-list-empty');
@@ -157,14 +158,19 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
+    function setAdminIconVisible(isAdmin) {
+        adminBtn.classList.toggle('hidden', !isAdmin);
+    }
+
     loginForm.addEventListener('submit', async (e) => {
         e.preventDefault();
         loginError.textContent = '';
         try {
-            await API.login(
+            const res = await API.login(
                 document.getElementById('login-email').value.trim(),
                 document.getElementById('login-password').value
             );
+            setAdminIconVisible(res.user?.role === 'Admin');
             enterApp(false, true);
         } catch (err) {
             loginError.textContent = err.message;
@@ -190,6 +196,7 @@ document.addEventListener('DOMContentLoaded', () => {
     guestBtn.addEventListener('click', async () => {
         try {
             await API.guestLogin();
+            setAdminIconVisible(false);
             enterApp(true, true);
         } catch (err) {
             toast(err.message, true);
@@ -212,6 +219,10 @@ document.addEventListener('DOMContentLoaded', () => {
         location.reload();
     });
 
+    adminBtn.addEventListener('click', () => {
+        location.href = '/admin';
+    });
+
     async function enterApp(isGuest, isFreshLogin) {
         State.isGuest = isGuest;
         authScreen.classList.add('hidden');
@@ -224,6 +235,17 @@ document.addEventListener('DOMContentLoaded', () => {
         guestBadge.classList.toggle('hidden', !isGuest);
         markAllReadBtn.classList.toggle('hidden', isGuest);
         document.querySelector('.nav-item[data-view="bookmarks"]').classList.toggle('disabled', isGuest);
+
+        // A fresh login/guest-login gets a brand new history entry, so the very
+        // first Back press lands inside the app instead of leaving the tab.
+        // Restoring an already-active session (boot() on normal page load) just
+        // tags the current entry with state, without adding a new one.
+        if (isFreshLogin) {
+            history.pushState({ view: State.currentView }, '', `#${State.currentView}`);
+        } else {
+            history.replaceState({ view: State.currentView }, '', `#${State.currentView}`);
+        }
+
         await refreshCurrentView();
     }
 
@@ -358,28 +380,53 @@ document.addEventListener('DOMContentLoaded', () => {
             const res = await API.me();
             if (res.success) {
                 API.csrfToken = res.csrf_token || null;
+                setAdminIconVisible(!res.guest && res.user?.role === 'Admin');
                 enterApp(!!res.guest);
                 return;
             }
         } catch (_) { /* not logged in */ }
+        setAdminIconVisible(false);
         authScreen.classList.remove('hidden');
         appRoot.classList.add('hidden');
     }
 
     // --- View Switching (Feed / Bookmarks / Sources) ---
     const navItems = document.querySelectorAll('.capsule-nav.center-capsule .nav-item');
+
+    // Switches to the given view, updates the nav highlight, and (unless told not to,
+    // e.g. when responding to a popstate event) pushes a new history entry for it —
+    // this is what gives the Back button somewhere to go within the app instead of
+    // leaving the tab on the very first press after login.
+    function switchView(view, pushHistory = true) {
+        const item = document.querySelector(`.capsule-nav.center-capsule .nav-item[data-view="${view}"]`);
+        if (!item || item.classList.contains('disabled')) return;
+
+        navItems.forEach(nav => nav.classList.remove('active'));
+        item.classList.add('active');
+        State.currentView = view;
+        renderViewChrome();
+        refreshCurrentView();
+
+        if (pushHistory) {
+            history.pushState({ view }, '', `#${view}`);
+        }
+    }
+
     navItems.forEach(item => {
         item.addEventListener('click', () => {
             if (item.classList.contains('disabled')) {
                 toast('Bookmarks require a registered account.', true);
                 return;
             }
-            navItems.forEach(nav => nav.classList.remove('active'));
-            item.classList.add('active');
-            State.currentView = item.dataset.view;
-            renderViewChrome();
-            refreshCurrentView();
+            switchView(item.dataset.view);
         });
+    });
+
+    // Restores the correct view when the user presses Back/Forward within the app.
+    window.addEventListener('popstate', (event) => {
+        if (!appRoot.classList.contains('hidden') && event.state?.view) {
+            switchView(event.state.view, false);
+        }
     });
 
     function renderViewChrome() {
@@ -795,4 +842,16 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     boot();
+
+    // --- Back/forward navigation fix ---
+    // When the browser restores this page from bfcache (e.g. hitting "Back" after
+    // visiting /admin), the page doesn't reload or re-run boot() by default — it just
+    // repaints whatever DOM state was frozen at navigation time. That can show a stale
+    // auth screen or a stale app view instead of the real, current session state.
+    // Re-running boot() on a bfcache restore re-checks /api/me and fixes the UI.
+    window.addEventListener('pageshow', (event) => {
+        if (event.persisted) {
+            boot();
+        }
+    });
 });

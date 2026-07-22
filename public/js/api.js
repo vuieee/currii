@@ -57,5 +57,12 @@ const API = {
     search: (q) => API.request('/api/articles/search', 'POST', { q }),
     toggleArticle: (article_id, field, state) => API.request('/api/articles/toggle', 'POST', { article_id, field, state }),
     markAllRead: () => API.request('/api/articles/mark-all-read', 'POST', {}),
-    fetchFullContent: (article_id) => API.request('/api/articles/fetch-full', 'POST', { article_id })
+    fetchFullContent: (article_id) => API.request('/api/articles/fetch-full', 'POST', { article_id }),
+
+    // --- Admin ---
+    adminGetUsers: () => API.request('/api/admin/users', 'GET'),
+    adminGetUser: (id) => API.request('/api/admin/user', 'POST', { id }),
+    adminUpdateUser: (id, email, role, status) => API.request('/api/admin/user/update', 'POST', { id, email, role, status }),
+    adminSetStatus: (id, status) => API.request('/api/admin/user/status', 'POST', { id, status }),
+    adminDeleteUser: (id) => API.request('/api/admin/user/delete', 'POST', { id })
 };

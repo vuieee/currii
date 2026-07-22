@@ -1,0 +1,185 @@
+/* public/css/admin.css — Admin dashboard styles, built on top of app.css's variables */
+
+.admin-gate {
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--bg-main);
+}
+.admin-gate-card {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    align-items: center;
+}
+.admin-gate-card p {
+    color: var(--text-secondary);
+    font-family: var(--font-sans);
+}
+
+.admin-root { height: 100vh; display: flex; flex-direction: column; background: var(--bg-main); }
+.admin-root.hidden { display: none; }
+
+.admin-pill {
+    font-family: var(--font-sans);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--on-accent);
+    background: var(--accent);
+    padding: 3px 9px;
+    border-radius: var(--radius-pill);
+    margin-left: var(--space-2);
+}
+
+.admin-layout {
+    flex: 1;
+    display: grid;
+    grid-template-columns: 1.6fr 1fr;
+    gap: var(--space-3);
+    padding: var(--space-3);
+    overflow: hidden;
+    min-height: 0;
+}
+
+.admin-user-panel, .admin-detail-panel {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    overflow: hidden;
+}
+
+.admin-table-wrap { flex: 1; overflow-y: auto; }
+
+.admin-table { width: 100%; border-collapse: collapse; font-family: var(--font-sans); font-size: 13.5px; }
+.admin-table thead th {
+    text-align: left;
+    position: sticky;
+    top: 0;
+    background: var(--bg-panel);
+    color: var(--text-secondary);
+    font-weight: 600;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    padding: var(--space-2) var(--space-3);
+    border-bottom: 1px solid var(--border);
+}
+.admin-table tbody tr {
+    cursor: pointer;
+    border-bottom: 1px solid var(--border);
+    transition: var(--transition);
+}
+.admin-table tbody tr:hover { background: var(--bg-row-hover); }
+.admin-table tbody tr.active { background: var(--accent-soft); }
+.admin-table td { padding: var(--space-2) var(--space-3); color: var(--text-primary); }
+.admin-table td.admin-col-role, .admin-table td.admin-col-status { white-space: nowrap; }
+
+.admin-status-chip, .admin-role-chip {
+    display: inline-block;
+    padding: 2px 9px;
+    border-radius: var(--radius-pill);
+    font-size: 11.5px;
+    font-weight: 600;
+}
+.admin-status-chip.Active { background: #E4EFE3; color: #3E6B3A; }
+.admin-status-chip.Disabled { background: var(--accent-soft); color: var(--danger); }
+.admin-role-chip.Admin { background: var(--accent-soft); color: var(--accent-hover); }
+.admin-role-chip.User { background: var(--bg-row-hover); color: var(--text-secondary); }
+[data-theme="dark"] .admin-status-chip.Active { background: #23331F; color: #8FCB85; }
+
+.admin-detail-empty {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-2);
+    color: var(--text-tertiary);
+    font-family: var(--font-sans);
+}
+
+.admin-detail-form {
+    flex: 1;
+    overflow-y: auto;
+    padding: var(--space-4);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+}
+.admin-detail-form.hidden { display: none; }
+
+.admin-detail-header { display: flex; align-items: center; gap: var(--space-3); margin-bottom: var(--space-2); }
+.admin-detail-id { font-family: var(--font-display); font-weight: 600; font-size: 17px; color: var(--text-primary); }
+.admin-detail-joined { font-family: var(--font-sans); font-size: 12.5px; color: var(--text-secondary); }
+
+.admin-stat-row {
+    display: flex;
+    gap: var(--space-3);
+    padding: var(--space-3);
+    margin-bottom: var(--space-2);
+    background: var(--bg-row-hover);
+    border-radius: var(--radius-md);
+}
+.admin-stat { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 2px; }
+.admin-stat-value { font-family: var(--font-display); font-size: 20px; font-weight: 600; color: var(--text-primary); }
+.admin-stat-label { font-family: var(--font-sans); font-size: 11px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.02em; }
+
+.admin-field-label {
+    font-family: var(--font-sans);
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    margin-top: var(--space-2);
+}
+.admin-field-input {
+    font-family: var(--font-sans);
+    font-size: 14px;
+    padding: 9px 12px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border);
+    background: var(--bg-panel-raised);
+    color: var(--text-primary);
+}
+.admin-field-input:focus { outline: none; border-color: var(--accent); }
+
+.admin-detail-error {
+    font-family: var(--font-sans);
+    font-size: 13px;
+    color: var(--danger);
+}
+.admin-detail-error.hidden { display: none; }
+
+.admin-detail-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    margin-top: var(--space-3);
+    padding-top: var(--space-3);
+    border-top: 1px solid var(--border);
+}
+.admin-btn {
+    font-family: var(--font-sans);
+    font-size: 13.5px;
+    font-weight: 600;
+    padding: 9px 16px;
+    border-radius: var(--radius-sm);
+    border: none;
+    cursor: pointer;
+    transition: var(--transition);
+}
+.admin-btn-outline {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text-primary);
+}
+.admin-btn-outline:hover { background: var(--bg-row-hover); }
+.admin-btn-danger { background: var(--danger); color: var(--on-accent); }
+.admin-btn-danger:hover { background: #A83F2D; }
+
+@media (max-width: 860px) {
+    .admin-layout { grid-template-columns: 1fr; }
+}

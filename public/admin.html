@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Currii — Admin</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,500,0,0;0,9..144,600,0,0;1,9..144,600,100,1;1,9..144,700,100,1&family=Inter:wght@400;500;600;700&display=optional" rel="stylesheet">
+    <link rel="stylesheet" href="css/app.css">
+    <link rel="stylesheet" href="css/admin.css">
+</head>
+<body>
+
+    <!-- Gate shown while we confirm the visitor is a signed-in admin -->
+    <div id="admin-gate" class="admin-gate">
+        <div class="admin-gate-card">
+            <h1 class="auth-logo">Currii</h1>
+            <p id="admin-gate-message">Checking administrator access…</p>
+            <a href="/" class="text-btn" id="admin-gate-back">Back to Currii</a>
+        </div>
+    </div>
+
+    <!-- Admin Dashboard (Step 1: Opens the administration dashboard) -->
+    <div id="admin-root" class="admin-root hidden">
+        <header class="app-header">
+            <div class="brand">
+                <span class="brand-mark">Currii</span>
+                <span class="admin-pill">Admin</span>
+            </div>
+            <div class="header-right">
+                <span id="admin-whoami" class="guest-badge"></span>
+                <a href="/" class="text-btn">Back to app</a>
+                <button class="text-btn" id="admin-logout-btn">Log out</button>
+            </div>
+        </header>
+
+        <main class="admin-layout">
+            <!-- User management page: list of registered users -->
+            <section class="panel admin-user-panel" id="admin-user-panel">
+                <div class="list-toolbar">
+                    <span class="list-toolbar-title">Registered users</span>
+                    <button class="text-btn" id="admin-refresh-btn" title="Refresh list">Refresh</button>
+                </div>
+                <div class="admin-table-wrap">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>Email</th>
+                                <th>Role</th>
+                                <th>Status</th>
+                                <th>Joined</th>
+                            </tr>
+                        </thead>
+                        <tbody id="admin-user-list"></tbody>
+                    </table>
+                </div>
+                <div class="admin-list-empty hidden" id="admin-list-empty">No registered users yet.</div>
+            </section>
+
+            <!-- Selected user: review details, update, disable, or delete (Steps 2-5) -->
+            <section class="panel admin-detail-panel" id="admin-detail-panel">
+                <div class="admin-detail-empty" id="admin-detail-empty">
+                    <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="12" cy="8" r="4"/><path d="M4 21v-1a8 8 0 0 1 16 0v1"/></svg>
+                    <span>Select a user to review their account</span>
+                </div>
+
+                <form id="admin-detail-form" class="admin-detail-form hidden">
+                    <div class="admin-detail-header">
+                        <div class="byline-avatar" id="admin-detail-avatar">?</div>
+                        <div>
+                            <div class="admin-detail-id" id="admin-detail-id">User #0</div>
+                            <div class="admin-detail-joined" id="admin-detail-joined"></div>
+                        </div>
+                    </div>
+
+                    <div class="admin-stat-row">
+                        <div class="admin-stat">
+                            <span class="admin-stat-value" id="admin-stat-subs">0</span>
+                            <span class="admin-stat-label">Subscriptions</span>
+                        </div>
+                        <div class="admin-stat">
+                            <span class="admin-stat-value" id="admin-stat-bookmarks">0</span>
+                            <span class="admin-stat-label">Bookmarks</span>
+                        </div>
+                        <div class="admin-stat">
+                            <span class="admin-stat-value" id="admin-stat-lastlogin">—</span>
+                            <span class="admin-stat-label">Last login</span>
+                        </div>
+                    </div>
+
+                    <label class="admin-field-label" for="admin-field-email">Email</label>
+                    <input type="email" id="admin-field-email" class="admin-field-input" required>
+
+                    <label class="admin-field-label" for="admin-field-role">Role</label>
+                    <select id="admin-field-role" class="admin-field-input">
+                        <option value="User">User</option>
+                        <option value="Admin">Admin</option>
+                    </select>
+
+                    <label class="admin-field-label" for="admin-field-status">Status</label>
+                    <select id="admin-field-status" class="admin-field-input">
+                        <option value="Active">Active</option>
+                        <option value="Disabled">Disabled</option>
+                    </select>
+
+                    <p class="admin-detail-error hidden" id="admin-detail-error"></p>
+
+                    <div class="admin-detail-actions">
+                        <button type="submit" class="app-modal-confirm admin-btn" id="admin-save-btn">Save changes</button>
+                        <button type="button" class="admin-btn admin-btn-outline" id="admin-toggle-status-btn">Disable account</button>
+                        <button type="button" class="admin-btn admin-btn-danger" id="admin-delete-btn">Delete account</button>
+                    </div>
+                </form>
+            </section>
+        </main>
+    </div>
+
+    <!-- Confirmation modal (Step 5: Confirms the administrative action) -->
+    <dialog id="app-modal" class="app-modal">
+        <form id="app-modal-form" method="dialog">
+            <h2 class="app-modal-title" id="app-modal-title">Title</h2>
+            <p class="app-modal-message hidden" id="app-modal-message"></p>
+            <label class="app-modal-label hidden" id="app-modal-label" for="app-modal-input"></label>
+            <input type="text" class="app-modal-input hidden" id="app-modal-input">
+            <p class="app-modal-error hidden" id="app-modal-error"></p>
+            <div class="app-modal-actions">
+                <button type="button" class="app-modal-btn app-modal-cancel" id="app-modal-cancel">Cancel</button>
+                <button type="submit" class="app-modal-btn app-modal-confirm" id="app-modal-confirm">OK</button>
+            </div>
+        </form>
+    </dialog>
+
+    <div id="toast-container" class="toast-container"></div>
+
+    <script src="js/api.js"></script>
+    <script src="js/admin.js"></script>
+</body>
+</html>

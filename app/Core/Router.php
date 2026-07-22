@@ -27,6 +27,12 @@ class Router {
             return;
         }
 
+        // Serve the admin dashboard shell (client-side JS enforces the admin-only API calls)
+        if ($path === '/admin' && $method === 'GET') {
+            require_once __DIR__ . '/../../public/admin.html';
+            return;
+        }
+
         // Handle API routes
         foreach ($this->routes as $route) {
             if ($route['path'] === $path && $route['method'] === strtoupper($method)) {

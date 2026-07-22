@@ -263,6 +263,7 @@ button, input { font: inherit; }
 }
 .toolbar-icon-btn:hover { background: var(--bg-row-hover); color: var(--text-primary); }
 .toolbar-icon-btn.active { color: var(--star); }
+#btn-bookmark.active svg { fill: var(--star); }
 #btn-collapse-feed.active { color: var(--accent); background: var(--accent-soft); }
 .list-toolbar-title {
     font-size: 13px; font-weight: 600; color: var(--text-primary);
@@ -390,6 +391,7 @@ button, input { font: inherit; }
 }
 .row-action-btn:hover { color: var(--accent); border-color: var(--accent); }
 .article-card.starred .row-action-btn[data-action="star"] { color: var(--star); border-color: var(--star); }
+.article-card.starred .row-action-btn[data-action="star"] svg { fill: var(--star); }
 
 .article-list-empty { padding: var(--space-6) var(--space-4); text-align: center; color: var(--text-secondary); font-size: 13px; }
 
