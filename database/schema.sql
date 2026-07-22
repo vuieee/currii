@@ -71,17 +71,6 @@ CREATE TABLE UserArticles (
     FOREIGN KEY (article_id) REFERENCES Articles(id) ON DELETE CASCADE
 );
 
-CREATE TABLE Advertisements (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    title VARCHAR(255) NOT NULL,
-    description TEXT,
-    image_url VARCHAR(500),
-    destination_url VARCHAR(500) NOT NULL,
-    is_active BOOLEAN DEFAULT TRUE,
-    impressions INT DEFAULT 0,
-    clicks INT DEFAULT 0
-);
-
 CREATE TABLE Preferences (
     user_id INT PRIMARY KEY,
     theme ENUM('light', 'dark', 'system') DEFAULT 'system',
