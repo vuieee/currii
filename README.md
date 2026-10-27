@@ -1,7 +1,5 @@
 # Currii
 
-A self-hosted RSS and Atom feed reader with a bookmarked reading list and a guest mode.
-
 <img src="assets/curriiheader.png" width="100%" alt="Currii feed reader" />
 
 ## Course Information
